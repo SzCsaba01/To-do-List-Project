@@ -1,0 +1,81 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container-fluid">
+    <a class="navbar-brand" routerLink="/home">ToDo</a>
+
+    <button 
+      class="navbar-toggler" 
+      type="button"
+      (click)="basicNavbar.toggle()" 
+      data-bs-toggle="collapse" 
+      data-bs-target="#navbarColor01"
+      aria-controls="navbarColor01" 
+      aria-expanded="false" 
+      aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div 
+      class="collapse navbar-collapse"
+      id="navbarSupportedContent"
+      mdbCollapse
+      #basicNavbar="mdbCollapse">
+      
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/private-list" routerLinkActive="active">Private Lists
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/shared-list" routerLinkActive="active">Shared Lists</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/administrative-list" routerLinkActive="active">Administrative Lists</a>
+        </li>
+        <li class="nav-itme" *ngIf="userRole == expectedRole">
+          <a class="nav-link" routerLink="/user-manager" routerLinkActive="active">User Manager</a>
+        </li>
+      </ul>
+   
+
+    <div>
+      <ul class="navbar-nav me-auto align-center">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/profile-details" routerLinkActive="active">Profile Details
+          </a>
+        </li>
+        <li class="nav-item">
+          <img [src]="profilePicture"
+            onerror="src='https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp'"
+            alt="avatar" class="rounded-circle img-fluid">
+        </li>
+        <li class="nav-item">
+          <a class="nav-link logout" (click)="changeLogOutStatus()" >Log Out</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<div *ngIf="logOutStatus" class="modal" role="dialog" [ngStyle]="{'display':'block'}">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Do you want to log out?</h4>
+      </div>
+
+      <div class="modal-body">
+        <form class="card-body">
+          <div class="btn-alignment">
+            <div class="d-flex justify-content-center btn-group">
+              <button (click)="onLogout()" type="button"
+                class="btn btn-success">Yes</button>
+                <button (click)="changeLogOutStatus()" type="button"
+                class="btn btn-danger">No</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

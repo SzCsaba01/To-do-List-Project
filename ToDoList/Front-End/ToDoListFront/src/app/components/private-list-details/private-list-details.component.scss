@@ -1,0 +1,73 @@
+@import '../../../styles/_styles.scss';
+
+.bi-check-circle-fill{
+  float: right;
+  font-size: 2em;
+  margin-top: 12px;
+  margin-right: 10px;
+}
+
+.bi-check-circle-fill:hover{
+  cursor: pointer;
+}
+
+.wrapper-list-buttons {
+  display: grid;
+  grid-template-columns: 110px 110px 110px 110px;
+  justify-content: center;
+  margin-left: 90px;
+}
+
+.input-size{
+  max-height: 25px;
+  margin: 10px 1px 10px 0px;
+}
+
+.control-buttons{
+  font-size: 30px;
+  margin-left: 10px;
+}
+
+.wrapper-task-details {
+  display: grid;
+  grid-template-columns: 50px 50px;
+  justify-content: center;
+  margin-left: 10px;
+  font-size: 30px;
+}
+
+.form-check-input{
+  margin-right: 10px;
+}
+
+.form-width{
+  max-width: 150px;
+  margin: 10px 0px 10px 0px;
+}
+
+.clickable{
+  cursor: pointer;
+}
+
+.btn-light{
+  margin: 10px 0px 0px 0px;
+}
+
+@media screen and (max-width: 600px) {
+  .list-custom {
+    width: 320px;
+  }
+
+  .wrapper-list-buttons {
+    grid-template-columns: 80px 80px 80px 80px;
+    margin-left: 80px;
+  }
+
+  .task-details {
+    width: 350px;
+  }
+  
+  .scrollable-div-tasks{
+    width:auto;
+  }
+}

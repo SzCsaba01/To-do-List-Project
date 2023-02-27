@@ -1,0 +1,21 @@
+ag-grid-angular {
+  height: calc(100vh - 190px);
+  width: 530px;
+}
+
+.btn-export{
+  width: 530px;
+  border-radius: 0px;
+}
+
+@media (max-width: 530px) {
+  ag-grid-angular {
+    height: calc(100vh - 190px);
+    width: 300px;
+  }
+  
+  .btn-export{
+    width: 300px;
+    border-radius: 0px;
+  }
+}

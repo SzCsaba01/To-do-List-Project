@@ -1,0 +1,193 @@
+<app-header [profilePicture]="userDetailsDto?.profilePicture"></app-header>
+
+<div class="container py-5 background div-margin-append">
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="card mb-4">
+        <div class="card-body text-center">
+          <div class="d-flex justify-content-center mb-2">
+            <input 
+              class="file-upload-input"
+              [hidden]="true" 
+              type="file" 
+              (change)="onChangeProfilePicture(fileInput.files)" 
+              accept="image/png, image/jpeg"
+              #fileInput>
+            <button 
+              type="button" 
+              (click)="fileInput.click()" 
+              class="btn file-upload-btn">
+              <img [src]="userDetailsDto?.profilePicture"
+                onerror="src='https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp'"
+                alt="avatar" 
+                class="rounded-circle img-fluid">
+            </button>
+          </div>
+          <button 
+              type="button" 
+              class="btn btn-primary file-upload-btn btn-size"
+              (click)="onSaveChanges()">
+              Save changes
+            </button> 
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-8">
+      <div class="card mb-4">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-sm-3">
+              <p class="mb-0">Username</p>
+            </div>
+            <div class="col-sm-9">
+              <p class="text-muted mb-0">{{userDetailsDto?.userName}}</p>
+            </div>
+          </div>
+          <hr>
+          <div class="row">
+            <div class="col-sm-3">
+              <p class="mb-0">Email</p>
+            </div>
+            <div class="col-sm-9">
+              <p class="text-muted mb-0">{{userDetailsDto?.email}}</p>
+            </div>
+          </div>
+          <hr>
+          <div class="row">
+            <div class="col-sm-3">
+              <p class="mb-0">First Name</p>
+            </div>
+            <div class="col-sm-9">
+              <p class="text-muted mb-0">{{userDetailsDto?.firstName}}</p>
+            </div>
+          </div>
+          <hr>
+          <div class="row">
+            <div class="col-sm-3">
+              <p class="mb-0">Last Name</p>
+            </div>
+            <div class="col-sm-9 margin-append">
+              <p class="text-muted mb-0">{{userDetailsDto?.lastName}}</p>
+            </div>
+          </div>
+          <div class="row justify-content-center">
+            <button type="button" class="btn btn-primary btn-size" (click)="openEditDetails()">Edit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex justify-content-center">
+    <div class="my-chart"  *ngIf="nrOfPrivateAssignments || nrOfSharedAssignments || nrOfAdministrativeAssignments">
+      <canvas
+      baseChart
+      [data]="tasksData"
+      [type]="'pie'"
+      (chartClick)="chartClick($event)"
+      >
+      </canvas>
+    </div>
+    <div class="my-chart-completed" *ngIf="nrOfCompletedPrivateAssignments || nrOfCompletedSharedAssignments || nrOfCompletedAdministrativeAssignments">
+      <canvas
+      baseChart
+      [data]="completedTasksData"
+      [type]="'line'"
+      >
+      </canvas>
+    </div>
+  </div>
+ 
+</div>
+
+<div class="modal" role="dialog" [ngStyle]="{'display': displayEditDetails}">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Edit profile details</h4>
+        <i (click)="onCloseEditDetails()" class="close bi bi-x-circle clickable cancel-button-modals"></i>
+      </div>
+    
+      <div class="modal-body">
+        <form class="card-body" [formGroup]="editUserForm">
+          <div class="row" (click)="ChangeEditUserName()">
+            <label class="form-label">Username</label>
+            <input 
+              class="form-control"
+              type="text"
+              formControlName="userName"
+              [ngClass]="{'is-invalid': userName?.errors && (userName?.touched || userName?.dirty), 'is-valid':userName?.valid}">
+            <div class="invalid-feedback">
+            <strong *ngIf="userName?.errors?.['required']">
+                Username is required
+            </strong>
+            <strong *ngIf="userName?.errors?.['minlength']">
+                Username length must be greater than {{userName?.errors?.['minlength']?.['requiredLength']}} characters
+            </strong>
+            <strong *ngIf="userName?.errors?.['pattern']">
+                Only Alphabets and Numbers are allowed
+            </strong>
+            <strong *ngIf="userName?.errors?.['maxlength']">
+                Username length must be less than {{userName?.errors?.['maxlength']?.['requiredLength']}} characters
+            </strong>
+            </div>
+          </div>
+          <div class="row">
+            <label class="form-label">Email</label>
+            <input 
+              class="form-control"
+              type="text"
+              placeholder="Enter Email"
+              formControlName="email"
+              
+              [ngClass]="{'is-invalid': email?.errors && (email?.touched || email?.dirty), 'is-valid':email?.valid}">
+            <div class="invalid-feedback">
+              <strong *ngIf="email?.errors?.['required']">
+                  Email is required
+              </strong>
+              <strong *ngIf="email?.errors?.['email']">
+                  Invaild Email
+              </strong>
+            </div>
+          </div>
+          <div class="row">
+            <label class="form-label">First Name</label>
+            <input 
+              class="form-control"
+              type="text"
+              placeholder="Enter first name"
+              formControlName="firstName"
+              [ngClass]="{'is-invalid': firstName?.errors && (firstName?.touched || firstName?.dirty), 'is-valid':firstName?.valid}">
+            <div class="invalid-feedback">
+              <strong *ngIf="firstName?.errors?.['required']">
+                  First name is required
+              </strong>
+              <strong *ngIf="firstName?.errors?.['pattern']">
+                  Only Alphabets are allowed
+              </strong>
+            </div>
+          </div>
+          <div class="row">
+            <label class="form-label">Last Name</label>
+            <input 
+              class="form-control"
+              type="text"
+              placeholder="Enter last name"
+              formControlName="lastName"
+              [ngClass]="{'is-invalid': lastName?.errors && (lastName?.touched || lastName?.dirty), 'is-valid':lastName?.valid}">
+            <div class="invalid-feedback">
+              <strong *ngIf="lastName?.errors?.['required']">
+                  Last name is required
+              </strong>
+              <strong *ngIf="lastName?.errors?.['pattern']">
+                  Only Alphabets are allowed
+              </strong>
+            </div>
+          </div>
+          <div class="d-flex justify-content-center">
+            <button type="submit" [disabled]="editUserForm.invalid" class="btn btn-success margin-append-button" (click)="onSaveProfileDetailsChanges(editUserForm.value)">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

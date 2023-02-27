@@ -1,0 +1,51 @@
+@import "../../../styles/_styles.scss";
+
+.h1-custom {
+  font-size: 18px;
+}
+
+.div-margin-append{
+  margin-top: 150px;
+}
+
+.background {
+  background-color: $user-profile-details-background-color;
+  max-width: 100vh;
+  max-height: 150vh;
+}
+
+.my-chart{
+  max-width: 300px;
+  max-height: 300px;
+}
+
+.my-chart-completed{
+  max-width: 300px;
+  max-height: 300px;
+  margin-top: 80px;
+  margin-left: 30px;
+}
+
+.margin-append{ 
+  margin-bottom: 20px;
+}
+
+.btn-size{
+  max-width: 150px;
+  max-height: 37px;
+}
+
+img {
+  margin-bottom: 15px;
+  max-width: 180px;
+  max-height: 180px;
+  object-fit: cover;
+}
+
+.margin-append-button{
+  margin-top: 17px;
+}
+
+.close{
+  cursor: pointer;
+}

@@ -1,0 +1,21 @@
+<app-go-back-header [backRoute]="'/administrative-list'"></app-go-back-header>
+
+<div class="d-flex justify-content-center">
+  <h2 class="title">Name of selected list</h2>
+</div>
+
+<div class="d-flex justify-content-center">
+  <button (click)="getSelectedRowData()" class="btn btn-success btn-export">Export to Excel</button>
+</div>
+
+<div class="d-flex justify-content-center">
+  <ag-grid-angular
+                   class="ag-theme-alpine"
+                   [defaultColDef]="defaultColDef"
+                   [suppressExcelExport]="true"
+                   [columnDefs]="columnDefs" 
+                   [pagination]="true"
+                   [paginationPageSize]=11
+                   [rowData]="rowData"
+                   (gridReady)="onGridReady($event)"></ag-grid-angular>
+  </div>

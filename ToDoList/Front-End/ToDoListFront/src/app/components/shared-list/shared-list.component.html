@@ -1,0 +1,47 @@
+<app-header></app-header>
+
+<div class="d-flex justify-content-center">
+  <button (click)="isShownNewSharedListStatus()" type="button" class="btn btn-light create-btn">+ Create new shared
+    list</button>
+</div>
+ 
+  <div *ngIf="isShownNewSharedList" class="modal" role="dialog" [ngStyle]="{'display':'block'}">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header ">
+          <h4 class="modal-title">Create new shared list</h4>
+          <i (click)="isShownNewSharedListStatus(); clearNewListForm()" class="close bi bi-x-circle clickable cancel-button-modals"></i>
+        </div>
+
+        <div class="modal-body">
+          <form [formGroup]="newListForm" class="card-body">
+            <div class="form-group">
+              <label class="form-label">Name</label>
+              <input formControlName="listName" class="form-control" placeholder="Enter name"
+              [ngClass]="{'is-invalid': newListName?.errors && (newListName?.touched || newListName?.dirty), 'is-valid':newListName?.valid}">
+              <div *ngIf="newListName!.invalid && (newListName!.dirty || newListName!.touched)" class="invalid-feedback">
+                <div *ngIf="newListName!.errors?.['required']">
+                  Name is required.
+                </div>
+              </div>
+            </div>
+            <div class="d-flex justify-content-center">
+              <button [disabled]="newListName?.invalid" (click)="createNewList(); clearNewListForm()" type="button" class="btn btn-success save-btn">Save</button>
+            </div>
+          </form>
+        </div>
+    </div>
+  </div></div>
+
+  <div class="d-flex justify-content-center">
+    <div class="scrollable-div-list">  
+      <div *ngFor="let list of lists " class="d-flex justify-content-center">
+        <button type="button" class="btn btn-success list-custom" (click)="goToDetailsList(list)">
+          <div class = "list-name-location">{{list.name}}</div>
+          <div>
+            <span class="icon-container list-arrow-icon"><i class="bi bi-chevron-right"></i></span>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>

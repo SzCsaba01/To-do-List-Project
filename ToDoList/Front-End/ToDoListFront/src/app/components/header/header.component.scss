@@ -1,0 +1,14 @@
+
+@import '../../../styles/_styles.scss';
+img{
+    max-width: 40px;
+    max-height: 40px;
+    object-fit: cover;
+}
+
+.logout{
+    cursor: pointer;
+}
+.navbar{
+    background-color: $green-background !important;
+}

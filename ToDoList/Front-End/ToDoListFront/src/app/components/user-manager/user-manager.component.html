@@ -1,0 +1,164 @@
+<app-header></app-header>
+
+<div class="d-flex justify-content-center">
+    <div >
+        <div class="btn-toolbar justify-content-between ">
+            <div class="input-group">            
+                <input type="text" id="UserNameSearch" class="form-control input-size" placeholder="Search by Username" [(ngModel)]="searchedUserName" (ngModelChange)="onSearchByUserName()"/>
+                <input type="text" id="formControlDefault" class="form-control input-size" placeholder="Search by Email" [(ngModel)]="searchedEmail" (ngModelChange)="onSearchByEmail()"/>
+            </div>
+            <div class="btn-group">
+                <button type="button" class="bi bi-person-plus btn btn-light" (click)="changeShowAddNewUserStatus()"></button>
+            </div>
+        </div>
+
+        <ag-grid-angular
+            class="ag-theme-balham-dark"
+            [defaultColDef]="defaultColDef"
+            [columnDefs]="columnDefs"
+            (gridReady)="onGridReady($event)"
+            [gridOptions]="gridOptions"
+            [animateRows]="true"
+            [rowData]="rowData"
+            >
+        </ag-grid-angular>
+
+        <div class="d-flex justify-content-end">
+            <span class="label">
+                {{currentNumberOfUsersStartRow}} to {{currentNumberOfUsersEndRow}} of {{totalNumberOfUsers}}
+                <button class="btn btn-light" (click)="firstPage()" [disabled]="currentPage == 1">
+                    <i class="bi bi-chevron-bar-left"></i>
+                </button>
+                <button class="btn btn-light" (click)="previousPage()" [disabled]="currentPage == 1">
+                    <i class="bi bi-chevron-compact-left"></i>
+                </button>
+                Page {{currentPage}} of {{totalNumberOfPages}}
+                <button class="btn btn-light" (click)="nextPage()" [disabled]="currentPage == totalNumberOfPages">
+                    <i class="bi bi-chevron-compact-right"></i>
+                </button>
+                <button class="btn btn-light" (click)="lastPage()" [disabled]="currentPage == totalNumberOfPages">
+                    <i class="bi bi-chevron-bar-right"></i>
+                </button>
+            </span>
+        </div>
+    </div>
+
+    <div *ngIf="isShownDeleteUser" class="modal" role="dialog" [ngStyle]="{'display':'block'}">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>Delete this User?</h4>
+                    <i (click)="changeShowDeleteUser()" class="close bi bi-x-circle clickable cancel-button-modals"></i>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" (click)="deleteUser()" class="btn btn-danger">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="isShownAddNewUser" class="modal" role="dialog" [ngStyle]="{'display':'block'}">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Add new User</h4>
+                    <i (click)="changeShowAddNewUserStatus()" class="close bi bi-x-circle clickable cancel-button-modals"></i>
+                </div>
+
+                <div class="modal-body">
+                    <form class="card-body" [formGroup]="addUserForm">
+                        <div class="form-group">
+                            <label class="form-label">Username</label>
+                            <input 
+                                class="form-control"
+                                type="text"
+                                placeholder="Enter username"
+                                formControlName="userName"
+                                [ngClass]="{'is-invalid': userName?.errors && (userName?.touched || userName?.dirty), 'is-valid':userName?.valid}">
+                            <div class="invalid-feedback">
+                            <strong *ngIf="userName?.errors?.['required']">
+                                Username is required
+                            </strong>
+                            <strong *ngIf="userName?.errors?.['minlength']">
+                                Username length must be greater than {{userName?.errors?.['minlength']?.['requiredLength']}} characters
+                            </strong>
+                            <strong *ngIf="userName?.errors?.['pattern']">
+                                Only Alphabets and Numbers are allowed
+                            </strong>
+                            <strong *ngIf="userName?.errors?.['maxlength']">
+                                Username length must be less than {{userName?.errors?.['maxlength']?.['requiredLength']}} characters
+                            </strong>
+                            </div>
+                            <label class="form-label">Email</label>
+                            <input 
+                                class="form-control"
+                                type="text"
+                                placeholder="Enter Email"
+                                formControlName="email"
+                                [ngClass]="{'is-invalid': email?.errors && (email?.touched || email?.dirty), 'is-valid':email?.valid}">
+                            <div class="invalid-feedback">
+                                <strong *ngIf="email?.errors?.['required']">
+                                    Email is required
+                                </strong>
+                                <strong *ngIf="email?.errors?.['email']">
+                                    Invaild Email
+                                </strong>
+                            </div>
+                            <label class="form-label">First Name</label>
+                            <input 
+                                class="form-control"
+                                type="text"
+                                placeholder="Enter first name"
+                                formControlName="firstName"
+                                [ngClass]="{'is-invalid': firstName?.errors && (firstName?.touched || firstName?.dirty), 'is-valid':firstName?.valid}">
+                            <div class="invalid-feedback">
+                                <strong *ngIf="firstName?.errors?.['required']">
+                                    First name is required
+                                </strong>
+                                <strong *ngIf="firstName?.errors?.['pattern']">
+                                    Only Alphabets are allowed
+                                </strong>
+                            </div>
+                            <label class="form-label">Last Name</label>
+                            <input 
+                                class="form-control"
+                                type="text"
+                                placeholder="Enter last name"
+                                formControlName="lastName"
+                                [ngClass]="{'is-invalid': lastName?.errors && (lastName?.touched || lastName?.dirty), 'is-valid':lastName?.valid}">
+                            <div class="invalid-feedback">
+                                <strong *ngIf="lastName?.errors?.['required']">
+                                    Last name is required
+                                </strong>
+                                <strong *ngIf="lastName?.errors?.['pattern']">
+                                    Only Alphabets are allowed
+                                </strong>
+                            </div>
+                            <label class="form-label">Password</label>
+                            <input 
+                                class="form-control"
+                                type="password"
+                                placeholder="Enter password"
+                                formControlName="password"
+                                [ngClass]="{'is-invalid': password?.errors && (password?.touched || password?.dirty), 'is-valid':password?.valid}">
+                            <div class="invalid-feedback">
+                                <strong *ngIf="password?.errors?.['required']">
+                                    Password is required
+                                </strong>
+                                <strong *ngIf="password?.errors?.['minlength']">
+                                    Password length must be greater than {{password?.errors?.['minlength']?.['requiredLength']}} characters
+                                </strong>
+                                <strong *ngIf="password?.errors?.['pattern']">
+                                    Password must contain a Number, an Upper and Lower case character
+                                </strong>
+                            </div>                                  
+                        </div>
+                        <div class="d-flex justify-content-center margin-append-button">
+                            <button type="submit" (click)="onAddUser(addUserForm.value)" [disabled]="addUserForm.invalid" class="btn btn-success">Add User</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

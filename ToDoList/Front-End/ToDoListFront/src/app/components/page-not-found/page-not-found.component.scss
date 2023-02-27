@@ -1,0 +1,31 @@
+@import '../../../styles/_styles.scss';
+
+h1 {
+  font-size: 7.5em;
+  margin: 15px 0px;
+  font-weight:bold;
+}
+
+h2 {
+  font-weight:bold;
+}
+
+.home-button {
+  cursor: pointer;
+  border-radius: 5em;
+  color: $white-color;
+  background: $green-color;
+  border: 0;
+  padding: 10px 40px;
+  font-size: 13px;
+} 
+
+@media screen and (max-width:768px) {
+  body {
+    display:block;
+  }
+  .container {
+    margin-top:70px;
+    margin-bottom:70px;
+  }
+} 

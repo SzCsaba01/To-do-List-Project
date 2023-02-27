@@ -1,0 +1,336 @@
+<app-go-back-header [backRoute]="'/administrative-list'"></app-go-back-header>
+
+<div class="d-flex justify-content-center">
+  <h2 class="title">{{assignmentListName}}</h2>
+  <i *ngIf="userRole == expectedRole" class="bi bi-pencil clickable clickable-edit list-pencil-icon" 
+  (click)="setModalState(modalStateEnum.EditList); modifyListNameFormInit(assignmentListName)" title="Edit list name"></i>
+</div>
+
+<div class="d-flex justify-content-center">
+  <hr class="hr-style">
+</div>
+
+<div class="d-flex justify-content-center">
+  <i *ngIf="userRole == expectedRole" class="bi bi-plus-square clickable control-buttons add-btn-list" 
+   (click)="setModalState(modalStateEnum.AddNewTask); getActualTime(); createAssignmentFormInit()" title="Add assignment"></i>
+  <i *ngIf="userRole == expectedRole" class="bi bi-people clickable control-buttons share-btn-list" 
+   (click)="setModalState(modalStateEnum.SeeMembers)" title="See members"></i>
+  <i *ngIf="userRole == expectedRole" class="bi bi-trash clickable control-buttons trash-btn-list" 
+   (click)="setModalState(modalStateEnum.DeleteList)" title="Delete list"></i>
+  <i *ngIf="userRole == expectedRole" class="bi bi-box-arrow-up-right clickable control-buttons export-btn-list" 
+   (click)="goToExportPage()" title="Export to excel"></i>
+  <i class="bi bi-sort-down-alt clickable control-buttons sort-btn-list" (click)="orderAssignmentsByStatusAndDeadline()" 
+   title="Order assignments by status and deadline"></i>
+</div>
+
+<div class="d-flex justify-content-center">
+  <button (click)="refreshData()" class="btn btn-light refresh-data">Refresh Data</button>
+</div>
+
+<div [ngSwitch]="modalState">
+
+  <div *ngSwitchCase="'AddNewTask'" class="modal" role="dialog" [ngStyle]="{'display':'block'}">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header ">
+          <h4 class="modal-title">Add new task</h4>
+          <i (click)="setModalState(modalStateEnum.None)" class="close bi bi-x-circle clickable cancel-button-modals"></i>
+        </div>
+
+        <div class="modal-body">
+          <form [formGroup]="assignmentForm" class="card-body">
+
+            <label class="form-label-custom">Name</label>
+            <input formControlName="newAssignmentName" class="form-control" placeholder="Name of task">
+              <div *ngIf="assignmentForm.controls['newAssignmentName'].errors?.['required']" class="error-msg">
+                Name is required.
+              </div>
+              <label class="form-label-custom">Deadline</label>
+            <input formControlName="newAssignmentDeadline" class="form-control" type="datetime-local" id="meeting-time" useValueAsDate
+              name="deadline-time"
+              min = {{actualTime}}>
+              <div *ngIf="assignmentForm.controls['newAssignmentDeadline'].errors?.['required']" class="error-msg">
+                Deadline is required.
+              </div>
+              <label class="form-label-custom">Reminder</label>
+            <input formControlName="newAssignmentReminder" class="form-control" type="datetime-local" id="meeting-time" useValueAsDate
+              name="reminder-time"
+              min = {{actualTime}}>
+              <div *ngIf="assignmentForm.controls['newAssignmentReminder'].errors?.['required']" class="error-msg">
+                Reminder is required.
+              </div>
+              <label *ngIf="assignmentForm.errors" class="error-msg">{{ assignmentForm.errors['dates'] }}</label>
+              <div class="d-flex justify-content-center">
+                <button (click)="createAssignment(); clearNewAssignmentForm(); setModalState(modalStateEnum.None)" type="button" [disabled]="assignmentForm.invalid"
+                  class="btn btn-success save-btn">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div *ngSwitchCase="'EditList'" class="modal" role="dialog" [ngStyle]="{'display':'block'}">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header ">
+          <h4 class="modal-title">Edit list name</h4>
+          <i (click)="setModalState(modalStateEnum.None)" class="close bi bi-x-circle clickable cancel-button-modals"></i>
+        </div>
+
+        <div class="modal-body">
+          <form [formGroup]="modifyListForm" class="card-body">
+            <label class="form-label">Name</label>
+            <input formControlName="newListName" class="form-control" placeholder="Enter name">
+            <div *ngIf="modifyListForm.controls['newListName'].errors?.['required']" class="error-msg">
+              Name is required.
+            </div>
+              <div class="d-flex justify-content-center">
+                <button (click)="modifyListName(); setModalState(modalStateEnum.None)" type="button" [disabled]="modifyListForm.invalid"
+                  class="btn btn-success save-btn">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div *ngSwitchCase="'SeeMembers'" class="modal" role="dialog" [ngStyle]="{'display':'block'}">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Members of this list</h4>
+          <i (click)="setModalState(modalStateEnum.None)" class="close bi bi-x-circle clickable cancel-button-modals"></i>
+        </div>
+
+        <div class="modal-body">
+          <form class="card-body">
+            <div>
+              <div class="d-flex justify-content-center">
+                <button (click)="addNewMemberSwitchModal()" type="button" class="btn btn-outline-primary btn-popup-size">+ Add New
+                  Member</button>
+              </div>
+              <div *ngIf="newMember">
+                <form [formGroup]="addUserToListForm" class="card-body">
+                  <label class="form-label d-flex justify-content-center">Email</label>
+                  <input formControlName="addUser" class="form-control" placeholder="Enter email address" type="email" required
+                  [ngClass]="{'is-invalid': addUserToList?.errors && (addUserToList?.touched || addUserToList?.dirty), 'is-valid': addUserToList?.valid}">
+                  <div *ngIf="addUserToList!.invalid && (addUserToList!.dirty || addUserToList!.touched)" class="invalid-feedback">
+                    <div *ngIf="addUserToList!.errors?.['required']">
+                        Email is required
+                    </div>
+                  </div>
+                  
+                  <div class="d-flex justify-content-center">
+                    <div class="btn-group">
+                      <button [disabled]="!addUserToList?.valid" (click)="addNewMember(); clearNewMember()" type="button"
+                        class="btn btn-success btn-popup-size">Save</button>
+                      <button (click)="addNewMemberSwitchModal(); clearNewMember()" type="button"
+                        class="btn btn-danger btn-popup-size">Close</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+              <div class="members-scroll">
+                <div *ngFor="let member of membersList ">
+                  <h2 class="members">{{member}}</h2>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="'DeleteList'" class="modal" role="dialog" [ngStyle]="{'display':'block'}">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header ">
+          <h4 class="modal-title">Do you want to delete this list?</h4>
+          <i (click)="setModalState(modalStateEnum.None)" class="close bi bi-x-circle clickable cancel-button-modals"></i>
+        </div>
+
+        <div class="modal-body">
+          <form class="card-body">
+            <div class="btn-alignment">
+              <div class="d-flex justify-content-center btn-group">
+                <button (click)="deleteList()" type="button" class="btn btn-danger">Delete</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="'DeleteTask'" class="modal" role="dialog" [ngStyle]="{'display':'block'}">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header ">
+          <h4 class="modal-title">Do you want to delete this task?</h4>
+          <i (click)="setModalState(modalStateEnum.None)" class="close bi bi-x-circle clickable cancel-button-modals"></i>
+        </div>
+
+        <div class="modal-body">
+          <form class="card-body">
+            <div class="btn-alignment">
+              <div class="d-flex justify-content-center btn-group">
+                <button (click)="deleteAssignment(deleteAssignmentId, deleteAssignmentIndex); setModalState(modalStateEnum.None)" type="button" class="btn btn-light">Yes</button>
+                <button (click)="setModalState(modalStateEnum.None)" type="button"
+                  class="btn btn-light">No</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="'EditTask'" class="modal" role="dialog" [ngStyle]="{'display':'block'}">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header ">
+          <h4 class="modal-title">Edit task details</h4>
+          <i (click)="setModalState(modalStateEnum.None)" class="close bi bi-x-circle clickable cancel-button-modals"></i>
+        </div>
+
+        <div class="modal-body">
+          <form [formGroup]="assignmentForm" class="card-body">
+            <label class="form-label">Name</label>
+            <input id="newAssignmentName" formControlName="newAssignmentName" class="form-control" >
+            <div *ngIf="assignmentForm.controls['newAssignmentName'].errors?.['required']" class="error-msg">
+              Name is required.
+            </div>
+
+            <label class="form-label-custom">Deadline</label>
+            <input formControlName="newAssignmentDeadline" class="form-control" type="datetime-local" id="meeting-time"
+              name="deadline-time"
+              min = {{actualTime}}>
+              <div *ngIf="assignmentForm.controls['newAssignmentDeadline'].errors?.['required']" class="error-msg">
+                Deadline is required.
+              </div>
+            <label class="form-label-custom">Reminder</label>
+            <input  formControlName="newAssignmentReminder" class="form-control" type="datetime-local" id="meeting-time"
+              name = "reminder-time" 
+              min = {{actualTime}}>
+              <div *ngIf="assignmentForm.controls['newAssignmentReminder'].errors?.['required']" class="error-msg">
+                Reminder is required.
+              </div>
+              <label *ngIf="assignmentForm.errors" class="error-msg">{{ assignmentForm.errors['dates'] | json }}</label>
+              <div class="d-flex justify-content-center">
+                <button [disabled]="assignmentForm.invalid" (click)="updateAssignment(); setModalState(modalStateEnum.None)" type="button"
+                  class="btn btn-success save-btn">Save</button>
+              </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="'CreateReminder'" class="modal" role="dialog" [ngStyle]="{'display':'block'}">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header ">
+          <h4 class="modal-title">Add reminder for task</h4>
+          <i (click)="setModalState(modalStateEnum.None)" class="close bi bi-x-circle clickable cancel-button-modals"></i>
+        </div>
+
+        <div class="modal-body">
+          <form [formGroup]="createReminderForm" class="card-body">
+
+              <label class="form-label-custom">Reminder</label>
+            <input formControlName="newAssignmentReminder" class="form-control" type="datetime-local" id="meeting-time" useValueAsDate
+              name="reminder-time"
+              min = {{actualTime}}>
+              <div *ngIf="createReminderForm.controls['newAssignmentReminder'].errors?.['required']" class="error-msg">
+                Reminder is required.
+              </div>
+              <label *ngIf="createReminderForm.errors" class="error-msg">{{ createReminderForm.errors['dates'] }}</label>
+              <div class="d-flex justify-content-center">
+                <button (click)="createReminder(); setModalState(modalStateEnum.None)" type="button" [disabled]="createReminderForm.invalid"
+                  class="btn btn-success save-btn">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="'UpdateReminder'" class="modal" role="dialog" [ngStyle]="{'display':'block'}">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header ">
+          <h4 class="modal-title">Update reminder for task</h4>
+          <i (click)="setModalState(modalStateEnum.None)" class="close bi bi-x-circle clickable cancel-button-modals"></i>
+        </div>
+
+        <div class="modal-body">
+          <form [formGroup]="updateReminderForm" class="card-body">
+
+              <label class="form-label-custom">Reminder</label>
+            <input formControlName="updateAssignmentReminder" class="form-control" type="datetime-local" id="meeting-time" useValueAsDate
+              name="reminder-time"
+              min = {{actualTime}}>
+              <div *ngIf="updateReminderForm.controls['updateAssignmentReminder'].errors?.['required']" class="error-msg">
+                Reminder is required.
+              </div>
+              <label *ngIf="updateReminderForm.errors" class="error-msg">{{ updateReminderForm.errors['dates'] }}</label>
+              <div class="d-flex justify-content-center">
+                <button (click)="updateReminder(); setModalState(modalStateEnum.None)" type="button" [disabled]="updateReminderForm.invalid"
+                  class="btn btn-success save-btn">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="'None'" class="modal" role="dialog" [ngStyle]="{'display':'none'}"></div>
+</div>
+
+<div class="d-flex justify-content-center">
+  <div class="scrollable-div-tasks scrollbar-success">
+  <div *ngFor="let task of tasks ; let i = index">
+    <button (click)="changeTaskExpanded(i)" type="button" 
+      class="btn task-custom" [ngClass]="{'green-background' : task.status, 'red-backgroud': !task.status}">
+      <div class="list-name-location" >{{task.name}}</div>
+      <div [hidden]="task.isDetailsExpanded">
+        <span><i class="bi bi-chevron-down list-arrow-icon"></i></span>
+      </div>
+      <div [hidden]="!task.isDetailsExpanded">
+        <span><i class="bi bi-chevron-up list-arrow-icon"></i></span>
+      </div>
+    </button>
+    <span class="icon-container"><i class="bi bi-check-circle-fill" 
+      (click)="changeTaskCompleted(task)" [ngClass]="{'green' : task.status, 'red bi bi-x-circle-fill': !task.status}"></i></span>
+    <div [hidden]="!task.isDetailsExpanded" class="div-align-center">
+      <div class="task-details">
+        <div class="task-body">
+        <div>Deadline: {{task.deadline | date : 'short'}}</div>
+        <div *ngIf="!checkDefaultDate(i); else noReminder">Reminder: {{task.reminder | date: 'short'}}</div>
+            <ng-template #noReminder>Reminder: -</ng-template>
+
+          <div class="d-flex justify-content-center">
+            <div class="btn-group">
+              <i *ngIf="checkDefaultDate(i)" 
+               (click)="setModalState(modalStateEnum.CreateReminder); setEditedTaskIndex(i); createReminderFormInit(task.deadline!); getActualTime()"
+               class="bi bi-calendar-plus clickable control-buttons" title="Create reminder"></i>
+              <i *ngIf="!checkDefaultDate(i) && userRole === expectedRole" class="bi bi-pen clickable control-buttons"  title="Edit assignment"
+              (click)="setModalState(modalStateEnum.EditTask); setEditedTaskIndex(i); modifyAssignmentFormInit(task.deadline!, task.reminder!, task.name!); getActualTime()"></i>
+              <i *ngIf="!checkDefaultDate(i) && userRole !== expectedRole" class="bi bi-pen clickable control-buttons" title="Update reminder"
+               (click)="setModalState(modalStateEnum.UpdateReminder); setEditedTaskIndex(i); updateReminderFormInit(task.deadline!, task.reminder!); getActualTime()"></i>
+              <i *ngIf="userRole === expectedRole" class="bi bi-trash clickable control-buttons" (click)="deleteAssignmentInit(task.id, i); 
+              setModalState(modalStateEnum.DeleteTask)" title="Delete assignment"></i>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+</div>

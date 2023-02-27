@@ -1,0 +1,74 @@
+@import '../styles/_styles.scss';
+
+.password-input, .email-input, .username-input {
+    width: 300px;
+    color: $user-pass-text-color;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 1px;
+    background: $backgroud-user-color;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    outline: none;
+    box-sizing: border-box;
+    border: 2px solid $backgroud-user-border-color;
+    margin-bottom: 50px;
+    margin-left: 46px;
+    text-align: center;
+    margin-bottom: 27px;
+}
+
+.login-button, .forgot-password-button {
+    cursor: pointer;
+    border-radius: 5em;
+    color: $white-color;
+    background: $submit-background;
+    border: 0;
+    padding: 10px 40px;
+    margin-left: 140px;
+    font-size: 13px;
+    box-shadow: 0 0 20px 1px $submit-a-color;
+} 
+
+.password-input:focus,.email-input:focus, .username-input:focus{
+    border: 2px solid $comp-focus !important;
+}
+
+
+a {
+    text-shadow: 0px 0px 3px $text-shadow-color;
+    color: $light-pink;
+    text-decoration: none;
+}
+
+.forgot-password-form-container, .login-form-container {
+    background-color: $white-color;
+    width: 400px;
+    max-height: 600px;
+    margin: 15em auto;
+    border-radius: 1.5em;
+    box-shadow: 0px 11px 35px 2px $main-box-shadow;
+ }
+
+ form.login-form, form.forgot-password-form {
+    padding-top: 40px;
+    padding-bottom: 10px;
+}
+
+.login-title, .forgot-password-title {
+    padding-top: 40px;
+    color: $login-color;
+    font-weight: bold;
+    font-size: 23px;
+    text-align: center;
+    color: $green-background;
+}
+
+.alert{
+    text-align: center;
+}
+
+.btn-primary{
+    background-color: $green-background !important;
+}
